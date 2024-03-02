@@ -1,0 +1,37 @@
+<annotation verified="yes">
+    <folder>Annotation</folder>
+    <filename>20210628_03491.jpg</filename>
+    <path>DataAssign0629-PascalVOC-export/Annotations/20210628_03491.jpg</path>
+    <source>
+        <database>Unknown</database>
+    </source>
+    <size>
+        <width>640</width>
+        <height>480</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+    <name>person</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+        <xmin>258.71640412703806</xmin>
+        <ymin>0.6625587352807971</ymin>
+        <xmax>477.3498888983243</xmax>
+        <ymax>396.8530627264493</ymax>
+    </bndbox>
+</object><object>
+    <name>motorbike</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+        <xmin>483.9751578068388</xmin>
+        <ymin>0</ymin>
+        <xmax>640</xmax>
+        <ymax>114.6169822803442</ymax>
+    </bndbox>
+</object>
+</annotation>

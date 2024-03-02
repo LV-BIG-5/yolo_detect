@@ -1,0 +1,5 @@
+path: ../my_yolo_dataset
+train: train
+val: val
+nc: 3
+names: ["bicycle", "motor", "person"]
