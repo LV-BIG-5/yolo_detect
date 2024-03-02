@@ -117,16 +117,16 @@ class cameraPage(QMainWindow):
         self.ui.pushButton_3.clicked.connect(self.quite_camera)
         self.model = yolo_detect.yolov5_model()
         select_area.c.closeSignal.connect(self.reload_background)
+        self.timer = QTimer(self)
+        self.timer2 = QTimer(self)
+        self.timer2.timeout.connect(self.judge_save)
+        self.timer2.start(100)
         self.slm = QStringListModel()
         self.qlist = []
         self.q_count = 0
+        self.count = 0
         self.slm.setStringList(self.qlist)
         self.ui.listView.setModel(self.slm)
-        self.timer2 = QTimer(self)
-        self.timer2.timeout.connect(self.judge_save())
-        self.timer2.start(10000)
-        self.timer = QTimer(self)
-
 
     def get_area(self):
         p_list.clear()
@@ -142,25 +142,25 @@ class cameraPage(QMainWindow):
         ans = yolo_detect.make_ans(self.model, img_rgb)
         visual = img
         result = []
-        result = [get_bbox_from_corners(corners) for corners in result]
-        result = non_max_suppression(result, 0.55)
-        result = [[[x_min,y_min], [x_max, y_min], [x_min, y_max], [x_max, y_max]]for x_min, y_min, x_max, y_max in result]
+        result = [get_bbox_from_corners(corners) for corners in ans]
+        result = non_max_suppression(result, 0.7)
+        result = [[[x_min,y_min], [x_max, y_min], [x_max, y_max], [x_min, y_max]]for x_min, y_min, x_max, y_max in result]
+        result1 = []
         if len(p_list) == 0:
-            for i in ans:
-                result.append(i[:-1])
+            result1 = result
         else:
-            for i in ans:
+            for i in result:
                 for j in i:
                     if in_or_out(j, p_list) :
-                        result.append(i[:-1])
+                        result1.append(i)
                         break
                     else:
                         continue
-        self.count = len(result)
+        self.count = len(result1)
         blank_image = np.zeros((640, 640, 3), np.uint8)
         cv2.polylines(blank_image, [np.array(p_list, np.int32).reshape((-1, 1, 2))], isClosed=True, color=(255, 0, 0),
                       thickness=2)
-        for i in result:
+        for i in result1:
             cv2.polylines(blank_image, [np.array(i, np.int32).reshape((-1, 1, 2))], isClosed=True,
                           color=(203, 192, 255),
                           thickness=2)
@@ -185,14 +185,14 @@ class cameraPage(QMainWindow):
 
     def quite_camera(self):
         flag = False
-        self.timer.stop()
-        self.timer2.stop()
         self.close()
 
     def initCamera(self):
         flag = True
+        self.timer = QTimer(self)
         self.timer.timeout.connect(self.get_camera)
-        self.timer.start(200)
+        self.timer.start(100)
+        self.timer2.start(10000)
 
     def judge_save(self):
         ret, img = capture.read()
@@ -211,12 +211,11 @@ class cameraPage(QMainWindow):
             self.slm.endInsertRows()
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
-            msg.setText("有人违停请尽快处理")
+            msg.setText("有违停，请及时处理")
             msg.exec_()
         else:
             self.q_count = self.count
-        self.timer.start(10000)
-
+        self.timer2.start(10000)
 
 class select_a(QMainWindow):
     data = pyqtSignal()
@@ -247,7 +246,6 @@ class select_a(QMainWindow):
         self.ui.label.setPixmap(pixmap)
         self.ui.label.setScaledContents(True)
     def makesure(self):
-        print(p_list)
         self.close()
 
     def closeEvent(self, event):

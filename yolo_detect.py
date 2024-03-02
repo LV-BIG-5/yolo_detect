@@ -25,7 +25,7 @@ def make_ans(model, img):
     results = model(tensor_image)
     results = results.squeeze(0)
     index = 4
-    threshold = 0.8
+    threshold = 0.5
     col_data = results[:, index]
     val = (col_data >= threshold)
     results = results[val]
@@ -40,6 +40,7 @@ def make_ans(model, img):
         kind = list_q.index(max(list_q))
         if kind == 2:
             continue
-        pre_ans = [[x+w/2,y+h/2], [x+w/2, y-h/2], [x-w/2, y-h/2], [x-w/2, y+h/2],kind]
-        ans.append(pre_ans)
+        else:
+            pre_ans = [[x+w/2,y+h/2], [x+w/2, y-h/2], [x-w/2, y-h/2], [x-w/2, y+h/2]]
+            ans.append(pre_ans)
     return ans
